@@ -51,13 +51,17 @@ function convertMs(ms) {
 
   return { days, hours, minutes, seconds };
 }
+// add 0 or 00 to time
+function pad(params) {
+	return String(params).padStart(2,'0')
+}
 // generation time
 const writeNewTime = () => {
   let count = convertMs(dataVal.getTime() - new Date().getTime());
-  refs.daysEl.innerHTML = (count.days < 10 ? '0' : '') + count.days;
-  refs.hoursEl.innerHTML = (count.hours < 10 ? '0' : '') + count.hours;
-  refs.minutesEl.innerHTML = (count.minutes < 10 ? '0' : '') + count.minutes;
-  refs.secondsEl.innerHTML = (count.seconds < 10 ? '0' : '') + count.seconds;
+  refs.daysEl.innerHTML = pad(count.days)
+  refs.hoursEl.innerHTML = pad(count.hours)
+  refs.minutesEl.innerHTML = pad(count.minutes)
+  refs.secondsEl.innerHTML = pad(count.seconds)
   refs.startBtn.disabled = true;
   if (dataVal.getTime() - new Date().getTime() <= 1000) {
     clearInterval(timer);
