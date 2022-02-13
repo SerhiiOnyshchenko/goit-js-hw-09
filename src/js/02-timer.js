@@ -5,7 +5,7 @@ import 'flatpickr/dist/flatpickr.min.css';
 // all modules
 import Notiflix from 'notiflix';
 
-const ref = {
+const refs = {
   iputEl: document.querySelector('#datetime-picker'),
   startBtn: document.querySelector('button[data-start]'),
   daysEl: document.querySelector('span[data-days]'),
@@ -13,26 +13,26 @@ const ref = {
   minutesEl: document.querySelector('span[data-minutes]'),
   secondsEl: document.querySelector('span[data-seconds]'),
 };
-const date = new Date();
-
 const options = {
   enableTime: true,
   time_24hr: true,
   defaultDate: new Date(),
   minuteIncrement: 1,
   onClose(selectedDates) {
-	  if (date.getTime() >= selectedDates[0].getTime()) {
-		 Notiflix.Notify.failure('Please choose a date in the future');
-      ref.startBtn.disabled = true;
+    if (options.defaultDate.getTime() >= selectedDates[0].getTime()) {
+      Notiflix.Notify.failure('Please choose a date in the future');
+      refs.startBtn.disabled = true;
     } else {
-		 Notiflix.Notify.success("Great! Let's go to start!");
-     ref.startBtn.disabled = false;
+      Notiflix.Notify.success("Great! Let's go to start!");
+      refs.startBtn.disabled = false;
     }
   },
 };
+let timer = null;
+let dataVal = 0;
 
-flatpickr(ref.iputEl, options);
-
+flatpickr(refs.iputEl, options);
+// convert ms to time
 function convertMs(ms) {
   // Number of milliseconds per unit of time
   const second = 1000;
@@ -51,26 +51,24 @@ function convertMs(ms) {
 
   return { days, hours, minutes, seconds };
 }
-let timer = null;
-let dataVal = 0;
+// generation time
 const writeNewTime = () => {
   let count = convertMs(dataVal.getTime() - new Date().getTime());
-  ref.daysEl.innerHTML = (count.days < 10 ? '0' : '') + count.days;
-  ref.hoursEl.innerHTML = (count.hours < 10 ? '0' : '') + count.hours;
-  ref.minutesEl.innerHTML = (count.minutes < 10 ? '0' : '') + count.minutes;
-	ref.secondsEl.innerHTML = (count.seconds < 10 ? '0' : '') + count.seconds;
-      ref.startBtn.disabled = true;
-  if ((dataVal.getTime() - new Date().getTime())<=1000) {
-	  clearInterval(timer);
-	  ref.startBtn.disabled = false;
-	ref.iputEl.setAttribute('readonly', false);
-	  
+  refs.daysEl.innerHTML = (count.days < 10 ? '0' : '') + count.days;
+  refs.hoursEl.innerHTML = (count.hours < 10 ? '0' : '') + count.hours;
+  refs.minutesEl.innerHTML = (count.minutes < 10 ? '0' : '') + count.minutes;
+  refs.secondsEl.innerHTML = (count.seconds < 10 ? '0' : '') + count.seconds;
+  refs.startBtn.disabled = true;
+  if (dataVal.getTime() - new Date().getTime() <= 1000) {
+    clearInterval(timer);
+    refs.startBtn.disabled = false;
+    refs.iputEl.setAttribute('readonly', false);
   }
 };
-
-ref.startBtn.addEventListener('click', () => {
-	dataVal = new Date(ref.iputEl.value);
-	ref.iputEl.disabled = true
-	writeNewTime();
+// start timer
+refs.startBtn.addEventListener('click', () => {
+  dataVal = new Date(refs.iputEl.value);
+  refs.iputEl.disabled = true;
+  writeNewTime();
   timer = setInterval(writeNewTime, 1000);
 });
